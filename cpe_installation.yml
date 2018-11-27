@@ -1,0 +1,20 @@
+---
+  - name: This playbook installs CPE
+    hosts: all
+
+    tasks:
+
+      - name: configure user geo
+        user: 
+          name: geo
+          state: present
+        become: yes
+        become_method: "sudo"
+
+      - name: Add the geo user to sudoers file
+        lineinfile:
+          dest: /etC/sudoers
+          regexp: '^%root\s'
+          line: 'root ALL=(ALL) NOPASSWD: ALL'
+        become: yes
+

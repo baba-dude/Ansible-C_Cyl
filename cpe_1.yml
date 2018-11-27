@@ -1,0 +1,18 @@
+---
+  - name: Second task
+    hosts: all
+
+    tasks:
+
+      - name: unmount var/lib/truecal
+        mount:
+          path: /var/lib/truecall
+          state: unmounted
+        become: yes
+
+      - name: Modify the fstab file
+        lineinfile:
+          path: /etc/fstab
+          state: absent
+          regexp: '^%var/lib/truecall'
+

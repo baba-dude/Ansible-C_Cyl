@@ -1,0 +1,22 @@
+---
+  - name: Bangalore cpe tasks
+    hosts: all
+
+    tasks:
+
+      - name: Disable the selinux
+        selinux:
+          state: disabled
+        become: yes
+
+      - name: change value from 1024 to 96208 in nproc.conf
+        lineinfile:
+          path: /etc/security/limits.d/90-nproc.conf
+          regexp: '^(.*)1024(.*)$'
+          line: 96208
+        become: yes
+
+#      - name: Modify the grub2.conf
+
+      - name: 
+        

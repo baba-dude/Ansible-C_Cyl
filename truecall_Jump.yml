@@ -1,0 +1,56 @@
+---
+  - name: Configure true call from Jump
+    hosts: all
+
+    tasks:
+
+      - name: create a directory truecall on Jumpserver
+        file:
+          path: /root/truecall
+          state: directory
+          mode: 0755
+        become: yes
+
+      - name: copy the packages to CPE
+        copy:
+          src: /tmp/TC_17.1.0.9
+          dest: /root/truecall
+          remote_src: yes
+        become: yes
+
+      - name: change the permissions of the package
+        file:
+          path: /tmp/TC_17.1.0.9
+          owner: root
+          mode: 0777
+        become: yes
+
+      - name: Install the rpm
+        yum:
+          name: /root/truecall_install/TC_17.1.0.9/TrueCall-Server-17.1.0.9-0-g7f57922-CentOS_6.5-x86_64.rpm
+          state: present
+        become: yes
+
+      - name: stop the truecall service
+        service:
+          name: truecall-server
+          state: stopped
+
+      - name: change the paramter stat-output-interval paramter to 60
+        lineinfile:
+          path: /etc/init.d/truecall-server
+          regrxp: '^(.*)stat-output-interval(.*)$'
+          line: stat-output-interval paramter to 60
+        become: yes
+
+      - name: execute thefollowing steps
+        shell: |
+          source ~/tc3-env.sh
+          service iptables stop
+
+      - name: rpm installation
+        yum: 
+          name: truecall-server-17.1.0.9-1.x86_64
+          state: present
+        become: yes
+

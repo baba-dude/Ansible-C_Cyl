@@ -1,0 +1,15 @@
+---
+  - name: Tasks under cpe cylinder
+    hosts: all
+
+    tasks:
+
+      - name: change the hostname of the CEPE
+        hostname:
+          name: CPE_Kolkata08
+        become: yes
+
+      - name: restart the network
+        shell: /etc/init.d/network restart
+        become: yes
+
