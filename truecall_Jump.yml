@@ -4,6 +4,20 @@
 
     tasks:
 
+      - name: change the value from 1024 to 96208
+        lineinfile:
+          path: /etc/security/limits.d/90-nproc.conf
+          regexp: '^(.*)1024(.*)$'
+          line: 96209
+        become: yes
+   
+      - name: change the grub.conf
+        lineinfile:
+          path: /boot/grub2/grub.conf
+          regexp: '^(.*)elevator = noop(.*)$'
+          line: elevator=noop
+        become: yes
+
       - name: create a directory truecall on Jumpserver
         file:
           path: /root/truecall
@@ -42,6 +56,22 @@
           regrxp: '^(.*)stat-output-interval(.*)$'
           line: stat-output-interval paramter to 60
         become: yes
+     
+      - name: rename the config.ini
+        command: mv /opt/tc3/etc/config.ini config.ini_bkp_20180117
+        become: yes
+
+      - name: move insights_config.ini to insights_config.ini_bkp_20180209
+        command: mv insights_config.ini insights_config.ini_bkp_20180209
+        become: yes
+
+      - name: cahnge the isights_config.ini overshooting cells to enabled
+        lineinfile: 
+          path: /opt/tc3/etc/
+          regexp: '^(.*)overshooting cells(.*)$'
+          line: overshooting cells: enabled
+        become: yes
+
 
       - name: execute thefollowing steps
         shell: |
@@ -54,3 +84,13 @@
           state: present
         become: yes
 
+      - name: start the trueall-server
+        service:
+          name: truecall-server
+          state: started
+        become: yes
+      - name: Add the below lines to yum repo
+        get_url: githuburl
+        dest: /etc/yum.repos.d
+        force: yes
+        

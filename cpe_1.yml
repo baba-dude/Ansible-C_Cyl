@@ -16,3 +16,38 @@
           state: absent
           regexp: '^%var/lib/truecall'
 
+      - name: Transfer the jump key from the jump server to CPE
+        copy:
+          path: /tmp/jump_key
+          dest: /tmp/
+          mode: 0644
+          remote_src: yes
+        become: yes
+      
+      - name: generate the ssh key on Jump server as root user
+        command: ssh-keygen -t rsa
+        args:
+        creates: /root/.ssh/id_rsa
+        become_user: root
+        become: yes
+
+      - name: change the permissions of ssh
+        file:
+          path: /root/.ssh
+          owner: root
+          mode: 0644
+        become: yes
+
+      - name: change the hostame to cpe_kolkata
+        hostname:
+          name: CPE_Kolkata08
+        become: yes
+
+      - name: restart the network
+        service:
+          name: network
+          state: restarted
+        become: yes
+    
+      
+
